@@ -8,8 +8,10 @@ Created on Tue May  4 19:26:32 2021
 from flask import Flask, jsonify, render_template, request
 import numpy as np
 import pickle
+from keras.models import load_model
 app = Flask(__name__)
-model = pickle.load(open('chronic_k_d.pkl', 'rb'))
+# model = pickle.load(open('chronic_k_d.pkl', 'rb'))
+model = load_model('C_k_d.h5')
 # l=[0.75,	0.0,	0.012712,	0.768707,	0.666667,	0.0]
 # a=np.array(l)
 # print(a.shape)
@@ -30,7 +32,10 @@ def predict():
 
         int_features = [float(x) for x in request.form.values()]
         final_features = [np.array(int_features)]
-        prediction = model.predict([final_features])
+        print(final_features)
+        roi = np.expand_dims(final_features, axis=0)
+        prediction = model.predict([roi])
+        print(prediction)
         output = ""
         if(prediction == 0):
             output = ("Not a Chronic")
